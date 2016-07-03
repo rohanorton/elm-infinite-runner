@@ -1,18 +1,28 @@
 module Game exposing (init, update, subscriptions, view)
 
-import Html exposing (Html, text)
+import Svg exposing (Svg, svg)
+import Svg.Attributes exposing (height, width)
+import Runner
 
 
 -- Model
 
 
 type alias Model =
-    {}
+    { runner : Runner.Model
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    {} ! []
+    let
+        ( runner, runnerCmds ) =
+            Runner.init
+    in
+        { runner = runner
+        }
+            ! [ Cmd.map RunnerUpdate runnerCmds
+              ]
 
 
 
@@ -20,13 +30,13 @@ init =
 
 
 type Msg
-    = NoOp
+    = RunnerUpdate Runner.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
+        RunnerUpdate subMsg ->
             model ! []
 
 
@@ -43,6 +53,11 @@ subscriptions model =
 -- View
 
 
-view : Model -> Html Msg
+view : Model -> Svg Msg
 view model =
-    text "Hello, World!"
+    svg
+        [ width <| toString 1000
+        , height <| toString 300
+        ]
+        [ Runner.view model.runner
+        ]
